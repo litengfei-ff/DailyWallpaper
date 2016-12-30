@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Drawing;
 using System.IO;
@@ -13,12 +13,13 @@ namespace BgChange
     public class BingPerDayImg
     {
 
-        private string bingAPIUrl = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
+        private string bingUrl = "http://cn.bing.com/";
+        private string bingAPIUrl = "HPImageArchive.aspx?format=js&idx=0&n=1";
         private string jsonToken = "images[0].url";
 
         private async Task<string> GetImgUrl()
         {
-            var res = await HttpRequestHelper.GetResponse(bingAPIUrl);
+            var res = await HttpRequestHelper.GetResponse(bingUrl + bingAPIUrl);
             var resJsonString = Encoding.UTF8.GetString(res);
             var resData = JObject.Parse(resJsonString);
             var resUrl = resData.SelectToken(jsonToken).ToString();
@@ -36,7 +37,7 @@ namespace BgChange
             try
             {
                 var imgUrl = await GetImgUrl();
-                var resBytes = await HttpRequestHelper.GetResponse(imgUrl);
+                var resBytes = await HttpRequestHelper.GetResponse(bingUrl + imgUrl);
 
                 Image img = Bitmap.FromStream(new MemoryStream(resBytes));
                 img.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
